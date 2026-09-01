@@ -128,6 +128,49 @@ export function getAllExistingTitles(chid = this_chid) {
 }
 
 /**
+ * Resolves GreetingTools-specific macros before passing text to SillyTavern.
+ * This avoids relying on substituteParams() for extension-defined dynamic macros.
+ *
+ * @param {string} template - Prompt template to process
+ * @param {Record<string, unknown>} macros - GreetingTools-specific macro values
+ * @returns {string} Prompt with GreetingTools macros resolved
+ */
+function resolveGreetingToolsMacros(template, macros = {}) {
+    let result = String(template ?? '');
+
+    // Resolve GreetingTools-specific {{#if key}} ... {{/if}} blocks.
+    for (const [key, rawValue] of Object.entries(macros)) {
+        const value = rawValue == null ? '' : String(rawValue);
+
+        const ifPattern = new RegExp(
+            `{{#if\\s+${escapeRegex(key)}\\s*}}([\\s\\S]*?){{\\/if}}`,
+            'g',
+        );
+
+        result = result.replace(
+            ifPattern,
+            (_match, content) => value.trim().length > 0 ? content : '',
+        );
+    }
+
+    // Replace GreetingTools-specific {{key}} macros.
+    for (const [key, rawValue] of Object.entries(macros)) {
+        const value = rawValue == null ? '' : String(rawValue);
+
+        const macroPattern = new RegExp(
+            `{{\\s*${escapeRegex(key)}\\s*}}`,
+            'g',
+        );
+
+        // Function replacement prevents $, $&, $1, etc. in user text
+        // from being interpreted specially by String.replace().
+        result = result.replace(macroPattern, () => value);
+    }
+
+    return result;
+}
+
+/**
  * Generates greeting content using LLM.
  * @param {string} customPrompt - Optional custom prompt from user
  * @param {object} [options] - Generation options
@@ -143,14 +186,23 @@ export async function generateGreetingContent(customPrompt, { loaderMessage, exi
         customPrompt: customPrompt || '',
     };
 
-    // Substitute macros in system prompt (uses customizable prompt from settings)
-    const systemPrompt = substituteParams(greetingToolsSettings.generateGreetingSystemPrompt, undefined, undefined, dynamicMacros);
+    // Resolve GreetingTools macros locally first, then let SillyTavern
+    // resolve its normal macros such as {{char}} and {{user}}.
+    const systemPromptTemplate = resolveGreetingToolsMacros(
+        greetingToolsSettings.generateGreetingSystemPrompt,
+        dynamicMacros,
+    );
+    const systemPrompt = substituteParams(systemPromptTemplate);
 
     // Use configurable prompts from settings
-    const promptTemplate = customPrompt
+    const rawPromptTemplate = customPrompt
         ? greetingToolsSettings.generationPromptWithTheme
         : greetingToolsSettings.generationPromptWithoutTheme;
-    const prompt = substituteParams(promptTemplate, undefined, undefined, dynamicMacros);
+    const promptTemplate = resolveGreetingToolsMacros(
+        rawPromptTemplate,
+        dynamicMacros,
+    );
+    const prompt = substituteParams(promptTemplate);
 
     const greetingLoader = loader.show({
         message: loaderMessage || t`Generating new greeting...`,
@@ -219,7 +271,11 @@ export async function generateTitleAndDescription(greetingContent, { existingTit
         existingTitles: titles,
     };
 
-    const systemPrompt = substituteParams(greetingToolsSettings.generateSystemPrompt, undefined, undefined, dynamicMacros);
+    const systemPromptTemplate = resolveGreetingToolsMacros(
+        greetingToolsSettings.generateSystemPrompt,
+        dynamicMacros,
+    );
+    const systemPrompt = substituteParams(systemPromptTemplate);
     const prompt = greetingContent;
 
     const genLoader = showLoader

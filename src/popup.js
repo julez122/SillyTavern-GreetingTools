@@ -80,6 +80,9 @@ export class GreetingToolsPopup {
     /** @type {Map<string, boolean>} Stores the open/closed state of each greeting by ID */
     #toggleStates = new Map();
 
+    /** @type {Map<string, boolean>} Summary expansion is independent of the greeting editors. */
+    #descriptionStates = new Map();
+
     /**
      * @returns {Character}
      */
@@ -523,7 +526,49 @@ export class GreetingToolsPopup {
             descSpan.textContent = state.description || '';
             descSpan.title = state.description || '';
             descSpan.style.display = state.description ? '' : 'none';
+            descSpan.tabIndex = state.description ? 0 : -1;
+            if (state.description) {
+                descSpan.setAttribute('role', 'button');
+                const expanded = this.#descriptionStates.get(state.id) ?? false;
+                descSpan.classList.toggle('greeting-tools-description-expanded', expanded);
+                descSpan.setAttribute('aria-expanded', String(expanded));
+            } else {
+                descSpan.removeAttribute('role');
+                descSpan.removeAttribute('aria-expanded');
+                descSpan.classList.remove('greeting-tools-description-expanded');
+                this.#descriptionStates.delete(state.id);
+            }
         }
+    }
+
+    /**
+     * Makes a block summary toggle independently of its enclosing details editor.
+     * Called once for each cloned block; title updates keep the same summary element.
+     * @param {HTMLElement} block
+     */
+    #setupDescriptionToggle(block) {
+        const description = block.querySelector('.greeting-tools-description');
+        if (!(description instanceof HTMLElement)) return;
+
+        description.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const greetingId = block.dataset.greetingId;
+            if (!greetingId || !description.textContent) return;
+
+            const expanded = !(this.#descriptionStates.get(greetingId) ?? false);
+            this.#descriptionStates.set(greetingId, expanded);
+            description.classList.toggle('greeting-tools-description-expanded', expanded);
+            description.setAttribute('aria-expanded', String(expanded));
+        });
+
+        description.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            event.stopPropagation();
+            // Stop native details activation and SillyTavern's global Enter-to-click handler.
+            if (!event.repeat) description.click();
+        });
     }
 
     /**
@@ -640,6 +685,7 @@ export class GreetingToolsPopup {
 
         // Update title display
         this.#updateBlockTitle(block, this.#mainState, { isMain: true });
+        this.#setupDescriptionToggle(block);
 
         // Set textarea content and unique ID for expanded editor
         const textarea = block.querySelector('.greeting-tools-textarea');
@@ -779,6 +825,7 @@ export class GreetingToolsPopup {
         } else {
             this.#updateBlockTitle(block, state, { index });
         }
+        this.#setupDescriptionToggle(block);
 
         // Set textarea content and unique ID for expanded editor
         const textarea = block.querySelector('.greeting-tools-textarea');

@@ -33,8 +33,18 @@
     white-space: nowrap;
 }
 
-/* Maximize button: separate from actions grid */
-.greeting-tools-summary > .editor_maximize {
+/* Keep the grouped controls in the existing desktop title row. */
+.greeting-tools-controls {
+    display: contents;
+}
+
+/* Desktop uses the native details marker instead of the mobile triangle. */
+.greeting-tools-disclosure {
+    display: none;
+}
+
+/* Preserve the maximize button's desktop spacing inside the control wrapper. */
+.greeting-tools-summary .editor_maximize {
     flex-shrink: 0;
     margin-left: 8px;
     margin-right: 4px;
@@ -45,7 +55,7 @@
     flex-shrink: 0;
 }
 
-/* Description: max 5 lines, overflow hidden, full text in tooltip */
+/* Popup summaries start at five lines and can be activated to read the full text. */
 .greeting-tools-description {
     display: block;
     font-size: 0.9em;
@@ -60,6 +70,24 @@
     -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
     line-clamp: 5;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+}
+
+/* Expanded summaries keep their typography and paragraphs without line clipping. */
+.greeting-tools-description.greeting-tools-description-expanded,
+.greeting-selector-description.greeting-tools-description-expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    overflow: visible;
+}
+
+/* Make keyboard focus visible on the two summary controls without changing their text. */
+.greeting-tools-description[role="button"]:focus-visible,
+.greeting-selector-description[role="button"]:focus-visible {
+    outline: 2px solid var(--SmartThemeQuoteColor);
+    outline-offset: 3px;
 }
 
 /* Info line styling */
@@ -101,6 +129,119 @@
 
 .alternate_greeting textarea {
     max-height: 280px;
+    margin-top: 20px;
+}
+
+/* Match SillyTavern's mobile breakpoint while keeping the desktop layout intact. */
+@media screen and (max-width: 1000px) {
+    /* Use the centered title's disclosure indicator without the native marker's indent. */
+    .greeting-tools-block summary {
+        list-style: none;
+        margin-left: 0;
+        padding-left: 0;
+    }
+
+    /* Hide the native disclosure marker in browsers using the standard marker pseudo-element. */
+    .greeting-tools-block summary::marker {
+        content: '';
+    }
+
+    /* Hide the native disclosure marker in browsers using the WebKit pseudo-element. */
+    .greeting-tools-block summary::-webkit-details-marker {
+        display: none;
+    }
+
+    /* Stack the title above the controls and remove the theme's line above the summary. */
+    .greeting-tools-block .greeting-tools-summary {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        margin: 12px 0 8px;
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+
+    /* Center the caret and title together, allowing long titles to wrap without truncation. */
+    .greeting-tools-block .greeting-tools-title-wrapper {
+        display: flex;
+        align-items: baseline;
+        justify-content: center;
+        gap: 5px;
+        flex: none;
+        width: 100%;
+        text-align: center;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+        overflow-wrap: anywhere;
+        margin-bottom: 10px;
+    }
+
+    /* Keep titles bold and let their flex item shrink to wrap beside the caret. */
+    .greeting-tools-block .greeting-tools-title-wrapper strong {
+        min-width: 0;
+        font-weight: bold;
+    }
+
+    /* Keep each index small and together next to its greeting title. */
+    .greeting-tools-block .greeting_index {
+        font-size: 0.8em;
+        font-weight: normal;
+        white-space: nowrap;
+    }
+
+    /* Center all controls below the title and allow additional rows on narrow phones. */
+    .greeting-tools-block .greeting-tools-controls {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        width: 100%;
+        min-width: 0;
+        margin-bottom: inherit;
+    }
+
+    /* Let the action buttons share the same wrapping row as the large-editor icon. */
+    .greeting-tools-block .greeting-tools-actions {
+        display: contents;
+    }
+
+    /* Keep the compact caret before the title while retaining native summary activation. */
+    .greeting-tools-block .greeting-tools-disclosure {
+        display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    /* Rotate the mobile triangle when the native details editor is open. */
+    .greeting-tools-block details[open] .greeting-tools-disclosure i {
+        transform: rotate(90deg);
+    }
+
+    /* Keep the existing button sizing and center icons without desktop maximize margins. */
+    .greeting-tools-block .greeting-tools-controls .menu_button,
+    .greeting-tools-block .greeting-tools-controls .editor_maximize {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        margin: 0;
+    }
+
+    /* The main greeting has no Delete action, so reserve no mobile space for it. */
+    .greeting-tools-main-block .greeting-tools-controls .greeting-tools-delete {
+        display: none;
+    }
+
+    /* Separate alternate and temporary greetings below the summary or open textarea. */
+    .greeting-tools-block:not(.greeting-tools-main-block) {
+        padding-bottom: 14px;
+        margin-bottom: 14px;
+        border-bottom: 1px solid var(--SmartThemeBorderColor);
+    }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -150,6 +291,7 @@
     cursor: not-allowed;
 }
 
+/* Chat summaries start at three lines and remain readable through the summary toggle. */
 .greeting-selector-description {
     font-size: 0.9em;
     opacity: 0.8;
@@ -161,6 +303,8 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-clamp: 3;
+    overflow-wrap: anywhere;
+    cursor: pointer;
 }
 
 .greeting-selector-description:empty {

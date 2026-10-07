@@ -1,15 +1,17 @@
-# SillyTavern Greeting Tools [Extension]
+# SillyTavern Greeting Tools
 
-[![extension version](https://img.shields.io/badge/dynamic/json?color=blue&label=extension%20version&query=%24.version&url=https%3A%2F%2Fraw.githubusercontent.com%2FWolfsblvt%2FSillyTavern-GreetingTools%2Fmain%2Fmanifest.json)](https://github.com/Wolfsblvt/SillyTavern-GreetingTools/)
-[![release version](https://img.shields.io/github/release/Wolfsblvt/SillyTavern-GreetingTools?color=lightblue&label=release)](https://github.com/Wolfsblvt/SillyTavern-GreetingTools/releases/latest)
-[![required ST version](https://img.shields.io/badge/required%20ST%20version-staging-darkred?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABRFBMVEVHcEyEGxubFhafFRWfFRWeFBSaFhaWFRWfFRWfFRWOFhaeFRWeFBSeFBSfFRWfFRWdFRWbFBSfFBSfFBSdFRWeExOfFBSfFRWdFBSfFRWfFRWfGxudFRWeFBSTFRWeFRWeFRWfFRWcFhaeFRWfFRWeFRWfFRWfFRWeFRWeFRWeFRWgFBSgFRWfFRWfFRWgFRX26ur4+Pj9+/ugFBT9/v6fFRWtOzueFRWeFRWgFRX///+fFRX6+/vXo6OfFBSrODj6/PzIenr28PD+/f2gFRX06ur17e3dr6+rMzPTlJS5VVW+ZGT9/v7y39/y6OioMTHx//+1Skrrz8+qMDD7+/v7/Pzq0tLkvb22UVHHe3v4+Pi3WFjIgoL4+PjNjIy5XFyuQEDmzMzZpKThubn8/Py+YWHz8/P8/Pz9//+gFRX////36+tJcu2kAAAAaXRSTlMAARDDqIkMB8qyAzqXUrnQGROErSmd1o41pL4iL2oFTFiTHYt5ccZ1PF1G6ONj2/z1gv1n32CkQz/t7ceYYH+KqdZT5fSoY+XbwLSH1u8elxi8+OmeqJ78nTmbXBds8WlWNc+EwcovuYtEjPKpAAACkklEQVQ4y3VTZXfbQBBcwYlZlmSRLdmWmRpwqGFOw1BmPvf/f+/JeU3ipr0Pp/d2VzszO7cAJfj/oXiAxK5xFEU9TkoSxa1pLejggcayrMVNp2lk26w2wEvg4iUry7IATUGVPG12tlfrYB2iWjmPFJjGAxiqwYT5dyEr3MVkoUWZhgTAF0K+JRQfkyrrvhYoYcTWGVEvT/EpF/PudIAKBRTU18LQYswcR1bNiRxv0JXzDjYRzWsiIcuzKgk0OzglkMDVMW4QDiteXu5VJ7dLMBoYMxPxLV0QUk9zRK6SAEIwX+FEL0hTgRGSW00mXXY6Ce8oaw5UETiWokhqN21z9D3RUDMKH0dXo/Ozs/PRwfqbV5UgnNKodtHmydxwOPf+Mr+HJy87rT8ie5kBoLhXw/HXm5uNzf2N4/Hcxu6B6wAYtZiGxgBryNOdi+Xl70ABqsKT8WsKqr7rpAwe1ABhLCDPjT9sj39cX/88QqTgqRm1Yx1ZZAAWhKlPDElZ9vP28szM+HI9L1ADUbSIg061QlTmc252Z+nTTxer27+e5QW82evmdt0bLItvt7a2vn1ZnhTsloAXF++8pznVsu3T4xlyxi/Wqefj/UyibNFSOZq0oGKdERR/JVzd3Ht3eDhC8dHeqhZVGEcRGD2mwHAxbkEJ2Y4CUCmiapHw8lg2IyZh7BrA2bhPZHCJ6OeUFD+HVZRFYnShj21ip5FEEy4VTS1JbUZQeV71b22KEuOBHZzYZ1mx3WRZ3/X/sU2SFRTbbfIHXYyK9YdPnF+cPMlYiO5jTT33UpKbeadspxPLcqwvTNmvz8tyY2mnR+bAYtxnmHoyjdhbYZguxspkHwKZNum/1pcioYW6MJm3Yf5v+02S+Q13BVQ4NCDLNAAAAABJRU5ErkJggg==)](https://github.com/SillyTavern/SillyTavern/tree/staging)
+## `custom-features` branch changes
+
+![Extension Version Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjulez122%2FSillyTavern-GreetingTools%2Frefs%2Fheads%2Fcustom-features%2Fmanifest.json&query=%24.version&style=flat&label=version&labelColor=%23b00055&color=%23EE5396&link=https%3A%2F%2Fgithub.com%2Fjulez122%2FSillyTavern-GreetingTools%2Ftree%2Fcustom-features)
+
+- Mobile popup blocks at widths up to 1000px use centered, wrapping titles, smaller indices and a compact textarea caret immediately before the title. The large-editor icon and original compact action buttons sit in a centered row below, with wrapping available when needed. Alternate/temporary dividers belong to the outer block, below any open textarea; the main block has no bottom divider. Desktop keeps its original row and native disclosure marker.
+- Non-empty summaries support click/tap and Enter/Space expansion in the popup and widget, including the read-only widget. Collapsed previews remain five and three lines respectively. Empty descriptions are hidden. Textarea visibility and toolbar Expand All / Collapse All are independent of summary expansion.
+
+---
 
 A complete overhaul of greeting management in SillyTavern. Organize your character greetings with titles, descriptions, and AI-powered generation - all from a redesigned popup and an inline chat selector.
 
 This extension replaces the default "Alternate Greetings" button and popup with a much more powerful **Greeting Tools** experience. Give every greeting a name, find the one you want instantly, generate new ones with your LLM, and switch between them directly in the chat.
-
-> [!IMPORTANT]
-> This extension requires the **staging** branch of SillyTavern.
 
 > [!NOTE]
 > This extension requires the **[Experimental Macro Engine](https://docs.sillytavern.app/usage/core-concepts/macros/#macros)** to be enabled.
@@ -19,7 +21,7 @@ This extension replaces the default "Alternate Greetings" button and popup with 
 Install using SillyTavern's extension installer from the URL:
 
 ```txt
-https://github.com/Wolfsblvt/SillyTavern-GreetingTools
+https://github.com/julez122/SillyTavern-GreetingTools
 ```
 
 ## Features
@@ -36,8 +38,8 @@ Clicking it opens the Greeting Tools popup, which gives you a full overview and 
 - **Add and delete greetings** — Add new blank greetings or delete ones you no longer need, with a confirmation prompt to prevent accidents.
 - **Collapse / Expand all** — Toolbar buttons to quickly collapse or expand every greeting at once.
 - **Keyboard navigation** — Use Arrow Up/Down to navigate between greeting blocks. Hold Ctrl+Arrow while inside a textarea to jump to the next greeting.
-
-<img width="559" height="456" alt="Screenshot of the Greeting Tools popup showing the main greeting and a few alternate greetings with titles" src="https://github.com/user-attachments/assets/50919d4d-e535-4f27-b3a1-d87571353107" />
+- **Mobile layout** — At viewport widths of 1000px or less, greeting titles wrap on their own centered, bold line with smaller indices. A compact caret before the title toggles the greeting textarea. The large-editor icon and action buttons keep their original compact sizes and sit together in a centered row below the title, with wrapping available if space requires it. Alternate and temporary greeting dividers stay below the summary or open textarea; the main greeting has no bottom divider.
+- **Expandable summaries** — Click or tap a summary to read its complete text, then activate it again to return to the five-line preview. Keyboard users can focus the summary and press Enter or Space. This does not open or close the greeting textarea, and Expand All / Collapse All continue to control only the textareas.
 
 ### Inline Greeting Selector (Chat Widget)
 
@@ -48,8 +50,9 @@ When a chat starts with a character greeting, an inline **greeting selector** wi
 - **Swipe counter** — Shows the current position (e.g., *2 / 5*) so you know where you are among the available greetings.
 - **Jump to the editor** — The pencil button opens the Greeting Tools popup and highlights the currently active greeting.
 - **Only when changeable** — The selector buttons are only interactive when the chat has exactly one message (the greeting). Once the conversation continues, it switches to a read-only display.
+- **Read the full summary** — Click, tap, or use Enter/Space on the summary to toggle between its three-line preview and complete text. This remains available in read-only mode.
 
-![GIF of the greeting selector widget in the chat, showing the title, description and action buttons; opening the selector and searching for a new greeting to navigate to](https://github.com/user-attachments/assets/4ffcdd80-d01a-4e0b-9db4-45b58db51265)
+Summary expansion is temporary UI state. The popup remembers each greeting's choice through its redraws and reordering, then resets when reopened. The chat widget remembers each greeting's choice while viewing the current chat, including returning to a previous swipe, then resets on a chat switch or page reload. Popup and widget choices are independent and are never saved to character or chat data. Empty summaries remain hidden.
 
 ### AI-Powered Title & Description (Auto-Fill)
 
@@ -59,8 +62,6 @@ Don't want to come up with titles yourself? Let the LLM do it.
 - **Smart fill behavior** — If a title or description already exists, the extension asks before overwriting and shows a before/after preview so you can decide.
 - **Edit title popup** — Click the pencil icon on any greeting to manually edit its title and description. The Auto-Fill button is also available inside this popup.
 - **Context-aware** — The LLM receives existing greeting titles so it can generate names that are distinct and don't overlap.
-
-![GIF of the auto-fill wand button and the generated title/description appearing](https://github.com/user-attachments/assets/0716ec32-46e2-447c-b995-09fc3a297b73)
 
 ### AI-Powered Greeting Generation
 
@@ -72,8 +73,6 @@ Generate entirely new greeting messages using your LLM, directly from the popup 
 - **Diverse results** — Existing greeting titles are sent as context so the LLM avoids creating something too similar to what already exists.
 - **Automatic macro replacement** — By default, character and user names in the generated text are replaced with `{{char}}` and `{{user}}` macros, keeping your greetings portable. This can be toggled off in settings. (Changeable via [settings](#settings))
 
-<img width="336" height="182" alt="Screenshot of the 'Generate New Greeting' popup with the theme input and checkbox" src="https://github.com/user-attachments/assets/7bff6156-ddc1-401f-9368-6d5c8c481384" />
-
 ### Temporary Greetings
 
 Generate a greeting on-the-fly without permanently adding it to the character.
@@ -82,8 +81,6 @@ Generate a greeting on-the-fly without permanently adding it to the character.
 - **Marked as `TEMP`** — Temporary greetings are clearly tagged with a `TEMP` marker in both the selector and the popup, so you won't confuse them with saved greetings.
 - **Try before you save** — Browse the temporary greeting in the chat to see how it reads. If you like it, click the save button (floppy disk icon) to permanently add it as an alternate greeting. If not, just discard it.
 - **Persisted per chat** — Temporary greetings are stored in the chat metadata, so they survive a page refresh within the same chat session. They don't affect the character card itself until you save them.
-
-<img width="403" height="148" alt="Screenshot of temporary greetings in the popup with the TEMP marker, and the save/discard buttons" src="https://github.com/user-attachments/assets/902a01b1-6407-4d60-a33d-b56113c7e786" />
 
 ### Settings
 
@@ -133,14 +130,11 @@ This list mostly functions as a personal reminder of what still needs to be done
 - [x] Make temp greeting title/desc editable and generateable
 - [x] Refactoring / code cleanup (move functions, rename scripts, for separation of concerns) + Move most scripts into subfolder (keeping main repo page clean)
 - [x] "Replace names with macros" button in the popup for manual replacing
-- [ ] "Expand" button in the in-chat widget to see full description
+- [x] Click/tap and keyboard toggle in the in-chat widget to see the full description
 - [ ] Store extension version in extension metadata - on update check/ask if default prompts should be updated
 
 ## License
 
 AGPL-3.0
 
-## Contribution
-
-- Discord: `@Wolfsblvt`
-- Issues and pull requests are welcome.
+This is Julia's fork of [Wolfsblvt's original Greeting Tools extension](https://github.com/Wolfsblvt/SillyTavern-GreetingTools). The original project and upstream contributions retain their attribution; the fork's mobile layout and expandable-summary changes are by Julia and Codex. The existing GreetingTools macro-resolution fix is preserved.

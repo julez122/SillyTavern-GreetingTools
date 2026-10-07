@@ -28,6 +28,9 @@ let cachedOptions = [];
 /** @type {boolean} Flag to prevent concurrent injection attempts */
 let isInjecting = false;
 
+/** @type {Map<string, boolean>} Summary expansion follows greetings within the current chat only. */
+const descriptionStates = new Map();
+
 /**
  * Checks if the first message is a character greeting that we can display info for.
  * @returns {boolean}
@@ -257,9 +260,23 @@ function updateSelectorUI(selector, { rebuildDropdown = false } = {}) {
 
     // Update description (use temp data if available)
     const descEl = selector.querySelector('.greeting-selector-description');
-    if (descEl) {
+    if (descEl instanceof HTMLElement) {
         const description = isTempGreeting ? tempData?.description : currentOption?.description;
+        const greetingId = (isTempGreeting ? tempData?.id : currentOption?.id) ?? `swipe_${currentIndex}`;
         descEl.textContent = description || '';
+        descEl.dataset.greetingId = greetingId;
+        descEl.tabIndex = description ? 0 : -1;
+        if (description) {
+            descEl.setAttribute('role', 'button');
+            const expanded = descriptionStates.get(greetingId) ?? false;
+            descEl.classList.toggle('greeting-tools-description-expanded', expanded);
+            descEl.setAttribute('aria-expanded', String(expanded));
+        } else {
+            descEl.removeAttribute('role');
+            descEl.removeAttribute('aria-expanded');
+            descEl.classList.remove('greeting-tools-description-expanded');
+            descriptionStates.delete(greetingId);
+        }
     }
 
     // Toggle readonly mode (hide buttons when not changeable)
@@ -468,6 +485,29 @@ async function injectGreetingSelector() {
  * @param {HTMLElement} selector
  */
 function setupSelectorEventHandlers(selector) {
+    // Reading a summary remains available even when greeting selection is read-only.
+    const description = selector.querySelector('.greeting-selector-description');
+    if (description instanceof HTMLElement) {
+        description.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const greetingId = description.dataset.greetingId;
+            if (!greetingId || !description.textContent) return;
+
+            const expanded = !(descriptionStates.get(greetingId) ?? false);
+            descriptionStates.set(greetingId, expanded);
+            description.classList.toggle('greeting-tools-description-expanded', expanded);
+            description.setAttribute('aria-expanded', String(expanded));
+        });
+
+        description.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            event.stopPropagation();
+            if (!event.repeat) description.click();
+        });
+    }
+
     // Select button - opens the dropdown
     const selectBtn = selector.querySelector('.greeting-selector-select-btn');
     if (selectBtn) {
@@ -656,6 +696,7 @@ function removeGreetingSelector() {
  * Handles chat change event.
  */
 async function onChatChanged() {
+    descriptionStates.clear();
     // Temp greetings are already per-chat in chat_metadata, no need to clear
     // Small delay to ensure DOM is ready after chat switch
     setTimeout(() => injectGreetingSelector(), 50);

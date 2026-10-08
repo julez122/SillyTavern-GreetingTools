@@ -1,13 +1,21 @@
 # SillyTavern Greeting Tools
 
-## `custom-features` branch changes
-
 ![Extension Version Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjulez122%2FSillyTavern-GreetingTools%2Frefs%2Fheads%2Fcustom-features%2Fmanifest.json&query=%24.version&style=flat&label=version&labelColor=%23b00055&color=%23EE5396&link=https%3A%2F%2Fgithub.com%2Fjulez122%2FSillyTavern-GreetingTools%2Ftree%2Fcustom-features)
 
-- Mobile popup blocks at widths up to 1000px use centered, wrapping titles, smaller indices and a compact textarea caret immediately before the title. The large-editor icon and original compact action buttons sit in a centered row below, with wrapping available when needed. Alternate/temporary dividers belong to the outer block, below any open textarea; the main block has no bottom divider. Desktop keeps its original row and native disclosure marker.
-- Non-empty summaries support click/tap and Enter/Space expansion in the popup and widget, including the read-only widget. Collapsed previews remain five and three lines respectively. Empty descriptions are hidden. Textarea visibility and toolbar Expand All / Collapse All are independent of summary expansion.
+This is my personal fork of **[Wolfsblvt's original Greeting Tools extension](https://github.com/Wolfsblvt/SillyTavern-GreetingTools)**.
 
 ---
+
+## `custom-features` branch changes
+
+- **Branch merge**: Includes the `main` branch fix for the bug where `{{customPrompt}}` did not get resolved even when a custom prompt was typed in. View the commit [here](https://github.com/julez122/SillyTavern-GreetingTools/commit/1f8e68b01d5f4b437ec2a3185a9ffb3e1ad5b1cd). [⤷](https://github.com/SillyTavern/SillyTavern-GreetingTools/pull/3)
+- **Change:** On mobile, greeting titles including the greeting index now sit above the button row and the compact caret that opens the textarea is immediately before the title.
+- **Change:** The expand icon and original compact action buttons sit in a centered row below the greeting title, with wrapping available when needed. Every greeting is seperated by a horizontal divider below the summary. If the textarea is open, it is below any open textarea. The main greeting block has no bottom divider. Desktop keeps its original row and native disclosure marker.
+- **Change:** Non-empty summaries support click/tap and Enter/Space expansion in the popup and the in-chat widget, including the read-only widget. Collapsed previews remain five and three lines respectively. Empty descriptions are hidden. Textarea visibility and toolbar Expand All / Collapse All are independent of summary expansion.
+
+---
+
+## Original README
 
 A complete overhaul of greeting management in SillyTavern. Organize your character greetings with titles, descriptions, and AI-powered generation - all from a redesigned popup and an inline chat selector.
 
@@ -137,4 +145,3 @@ This list mostly functions as a personal reminder of what still needs to be done
 
 AGPL-3.0
 
-This is Julia's fork of [Wolfsblvt's original Greeting Tools extension](https://github.com/Wolfsblvt/SillyTavern-GreetingTools). The original project and upstream contributions retain their attribution; the fork's mobile layout and expandable-summary changes are by Julia and Codex. The existing GreetingTools macro-resolution fix is preserved.

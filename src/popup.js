@@ -516,8 +516,8 @@ export class GreetingToolsPopup {
                     indexSpanContent.textContent = `(#${displayIndex})`;
                     indexSpan.appendChild(indexSpanContent);
                 } else {
-                    titleSpan.textContent = 'Alternate Greeting #';
-                    indexSpan.textContent = String(displayIndex);
+                    titleSpan.textContent = 'Alternate Greeting';
+                    indexSpan.textContent = `(#${displayIndex})`;
                 }
             }
         }

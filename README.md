@@ -1,12 +1,16 @@
 # SillyTavern Greeting Tools
 
-![Extension Version Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjulez122%2FSillyTavern-GreetingTools%2Frefs%2Fheads%2Fcustom-features%2Fmanifest.json&query=%24.version&style=flat&label=version&labelColor=%23b00055&color=%23EE5396&link=https%3A%2F%2Fgithub.com%2Fjulez122%2FSillyTavern-GreetingTools%2Ftree%2Fcustom-features)
+![Extension Version Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjulez122%2FSillyTavern-GreetingTools%2Frefs%2Fheads%2Florebook-feature%2Fmanifest.json&query=%24.version&style=flat&label=version&labelColor=%23b00055&color=%23EE5396&link=https%3A%2F%2Fgithub.com%2Fjulez122%2FSillyTavern-GreetingTools%2Ftree%2Florebook-feature)
 
 This is my personal fork of **[Wolfsblvt's original Greeting Tools extension](https://github.com/Wolfsblvt/SillyTavern-GreetingTools)**.
 
 ---
 
-## `custom-features` branch changes
+## `lorebook-feature` branch changes
+
+- **Feature:** Optional full Character, auxiliary, and Persona lorebooks in the saved and temporary greeting generation popup. Compact, indented controls sit above the title/description option. Selected books include all enabled entries regardless of their activation mode, with named persona/character sections after the character-card context. Existing `custom-features` changes are retained.
+
+## Inherited `custom-features` branch changes
 
 - **Branch merge**: Includes the `main` branch fix for the bug where `{{customPrompt}}` did not get resolved even when a custom prompt was typed in. View the commit [here](https://github.com/julez122/SillyTavern-GreetingTools/commit/1f8e68b01d5f4b437ec2a3185a9ffb3e1ad5b1cd). [⤷](https://github.com/SillyTavern/SillyTavern-GreetingTools/pull/3)
 - **Change:** On mobile, greeting titles including the greeting index now sit above the button row and the compact caret that opens the textarea is immediately before the title.
@@ -78,6 +82,10 @@ Generate entirely new greeting messages using your LLM, directly from the popup 
 - **Generate from the popup** — Click **"Generate New Greeting"** in the toolbar. You'll be asked for an optional theme or scenario (e.g., *"A rainy day at a café"*). Leave it empty for a general new greeting based on the character.
 - **Title & description included** — A checkbox (on by default) lets you also generate a title and description alongside the greeting content in a single flow.
 - **Character-aware** — The generation prompt includes the character's description, personality, and scenario, so the output matches the character's style.
+- **Optional full lorebooks** — Above the title/description checkbox, enable **Add Character lorebook to prompt** to include the character's primary attached book. If additional books are attached, an indented **Add Auxiliary Lorebook** checkbox includes them after the primary book. Enable **Add Persona lorebook to prompt** to choose from all available lorebooks; the current persona's associated book is preselected when available. The selector does not change the persona's native lorebook association.
+- **Complete entry content** — Selected books contribute every enabled entry, including always-on, keyword-based, and vectorized entries, regardless of activation keywords or other activation rules. Only disabled entries are excluded. Entries are sent in full, with no trimming, summarization, or entry limits. A missing or unreadable selected book stops generation instead of silently sending partial context.
+- **Clear context sections** — Lorebook context follows the existing character-card system prompt, under `========= ADDITIONAL INFORMATION =========`. Persona entries come first under the resolved user name, then character entries and auxiliary entries under the resolved character name.
+- **Per-generation choices** — Both lorebook toggles start off whenever the popup opens. With both off, the greeting request is unchanged. These choices also work in temporary greeting generation and do not modify native character, persona, or lorebook settings. The optional follow-up request for a title/description retains its existing context.
 - **Diverse results** — Existing greeting titles are sent as context so the LLM avoids creating something too similar to what already exists.
 - **Automatic macro replacement** — By default, character and user names in the generated text are replaced with `{{char}}` and `{{user}}` macros, keeping your greetings portable. This can be toggled off in settings. (Changeable via [settings](#settings))
 

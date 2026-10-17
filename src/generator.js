@@ -3,13 +3,16 @@
  * Used by both the Greeting Tools popup and the inline greeting selector.
  */
 
-import { characters, generateRaw, substituteParams, name1, name2, this_chid } from '../../../../../script.js';
+import { characters, generateRaw, substituteParams, name1, name2, this_chid, user_avatar } from '../../../../../script.js';
 import { Popup, POPUP_TYPE } from '../../../../popup.js';
 import { t } from '../../../../i18n.js';
 import { escapeRegex } from '../../../../utils.js';
 import { greetingToolsSettings } from './settings.js';
 import { getGreetingToolsData, generateGreetingId } from './data.js';
 import { loader } from '/scripts/action-loader.js';
+import { world_info } from '../../../../world-info.js';
+import { buildLorebookContext, getCharacterLorebooks } from './lorebooks.js';
+import { createLorebookControls } from './lorebook-controls.js';
 
 /** Default placeholder text for the generate greeting popup */
 const GENERATE_GREETING_PLACEHOLDER = t`Describe what kind of greeting scenario you want to generate. Leave empty for a general new greeting based on the character.`;
@@ -18,6 +21,7 @@ const GENERATE_GREETING_PLACEHOLDER = t`Describe what kind of greeting scenario 
  * @typedef {Object} GeneratePopupResult
  * @property {string} prompt - The custom prompt text (empty for default)
  * @property {boolean} generateTitleDesc - Whether to generate title and description
+ * @property {import('./lorebooks.js').GreetingLorebooks} lorebooks - Selected full lorebooks
  */
 
 /**
@@ -27,7 +31,14 @@ const GENERATE_GREETING_PLACEHOLDER = t`Describe what kind of greeting scenario 
  * @returns {Promise<GeneratePopupResult | null>} The options or null if cancelled
  */
 export async function showGenerateGreetingPopup({ title: popupTitle } = {}) {
-    // Build custom popup content with checkbox
+    const context = SillyTavern.getContext();
+    const lorebookControls = createLorebookControls({
+        characterBooks: getCharacterLorebooks(characters[this_chid], world_info.charLore),
+        bookNames: context.getWorldInfoNames(),
+        personaBook: context.powerUserSettings.persona_description_lorebook,
+    });
+
+    // Keep the native scenario input and title/description checkbox.
     const container = document.createElement('div');
     container.classList.add('flex-container', 'flexFlowColumn', 'gap5');
 
@@ -45,6 +56,7 @@ export async function showGenerateGreetingPopup({ title: popupTitle } = {}) {
         placeholder: GENERATE_GREETING_PLACEHOLDER,
         okButton: t`Generate`,
         cancelButton: t`Cancel`,
+        onClosing: popup => typeof popup.value !== 'string' || lorebookControls.validate(),
         customInputs: [
             {
                 type: 'checkbox',
@@ -54,6 +66,7 @@ export async function showGenerateGreetingPopup({ title: popupTitle } = {}) {
             },
         ],
     });
+    popup.inputControls.prepend(lorebookControls.element);
 
     const result = await popup.show();
     if (typeof result !== 'string') return null;
@@ -63,6 +76,7 @@ export async function showGenerateGreetingPopup({ title: popupTitle } = {}) {
     return {
         prompt: result.trim(),
         generateTitleDesc: generateTitleDesc === true,
+        lorebooks: lorebookControls.getSelection(),
     };
 }
 
@@ -176,9 +190,11 @@ function resolveGreetingToolsMacros(template, macros = {}) {
  * @param {object} [options] - Generation options
  * @param {string} [options.loaderMessage] - Custom loader message
  * @param {string} [options.existingTitles] - Pre-computed existing titles (if not provided, fetched from metadata)
+ * @param {import('./lorebooks.js').GreetingLorebooks} [options.lorebooks] - Full lorebooks selected in the popup
+ * @param {() => boolean} [options.isCurrent] - Whether the original generation target is still selected
  * @returns {Promise<string | null>} Generated greeting content or null on failure
  */
-export async function generateGreetingContent(customPrompt, { loaderMessage, existingTitles: providedTitles } = {}) {
+export async function generateGreetingContent(customPrompt, { loaderMessage, existingTitles: providedTitles, lorebooks, isCurrent = () => true } = {}) {
     // Build dynamic macros
     const existingTitles = providedTitles ?? getAllExistingTitles();
     const dynamicMacros = {
@@ -192,7 +208,7 @@ export async function generateGreetingContent(customPrompt, { loaderMessage, exi
         greetingToolsSettings.generateGreetingSystemPrompt,
         dynamicMacros,
     );
-    const systemPrompt = substituteParams(systemPromptTemplate);
+    let systemPrompt = substituteParams(systemPromptTemplate);
 
     // Use configurable prompts from settings
     const rawPromptTemplate = customPrompt
@@ -209,11 +225,26 @@ export async function generateGreetingContent(customPrompt, { loaderMessage, exi
     });
 
     try {
+        const context = SillyTavern.getContext();
+        const lorebookContext = await buildLorebookContext(lorebooks, {
+            userName: name1,
+            characterName: characters[this_chid]?.name || name2,
+            loadWorldInfo: async name => {
+                if (!context.getWorldInfoNames().includes(name)) {
+                    throw new Error(t`Lorebook not found: ${name}`);
+                }
+                return context.loadWorldInfo(name);
+            },
+        });
+        if (!isCurrent()) return null;
+        if (lorebookContext) systemPrompt += `\n\n${substituteParams(lorebookContext)}`;
+
         const response = await generateRaw({
             prompt,
             systemPrompt,
             instructOverride: true,
         });
+        if (!isCurrent()) return null;
 
         console.info('[GreetingTools] Generated greeting content', { text: response });
 
@@ -238,7 +269,7 @@ export async function generateGreetingContent(customPrompt, { loaderMessage, exi
         return content;
     } catch (error) {
         console.error('[GreetingTools] Failed to generate greeting:', error);
-        toastr.error(t`Failed to generate greeting`);
+        toastr.error(t`Failed to generate greeting: ${error.message}`);
         return null;
     } finally {
         await greetingLoader.hide();
@@ -363,11 +394,28 @@ export async function generateGreetingFlow({
     existingTitles,
     onContentGenerated,
 } = {}) {
+    const context = SillyTavern.getContext();
+    const target = {
+        character: characters[this_chid]?.avatar,
+        chat: context.getCurrentChatId(),
+        persona: user_avatar,
+        userName: name1,
+    };
+    const isCurrent = () => {
+        const current = SillyTavern.getContext();
+        const matches = characters[this_chid]?.avatar === target.character
+            && current.getCurrentChatId() === target.chat
+            && user_avatar === target.persona && name1 === target.userName;
+        if (!matches) toastr.warning(t`The character, persona, or chat changed. Please generate the greeting again.`);
+        return matches;
+    };
+
     // Show popup
     const popupResult = await showGenerateGreetingPopup({ title: popupTitle });
     if (popupResult === null) return null;
+    if (!isCurrent()) return null;
 
-    const { prompt: customPrompt, generateTitleDesc } = popupResult;
+    const { prompt: customPrompt, generateTitleDesc, lorebooks } = popupResult;
 
     /** @type {Set<JQuery<HTMLElement>>} */
     const tempToasts = new Set();
@@ -380,6 +428,8 @@ export async function generateGreetingFlow({
         const content = await generateGreetingContent(customPrompt, {
             loaderMessage,
             existingTitles,
+            lorebooks,
+            isCurrent,
         });
         if (!content) return null;
 
@@ -401,6 +451,7 @@ export async function generateGreetingFlow({
 
             // Generate title/description
             const generated = await generateTitleAndDescription(content, { existingTitles });
+            if (!isCurrent()) return null;
             if (generated) {
                 title = generated.title;
                 description = generated.description;

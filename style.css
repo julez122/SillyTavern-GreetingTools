@@ -3,7 +3,7 @@
 /* Greyed out index number when custom title is set */
 .greeting-tools-index {
     font-weight: normal;
-    opacity: 0.5;
+    color: #7d3353;
 }
 
 /* Block styling */
@@ -163,7 +163,7 @@
 
     /* Center the caret and title together, allowing long titles to wrap without truncation. */
     .greeting-tools-block .greeting-tools-title-wrapper {
-        display: flex;
+        display: block;
         align-items: baseline;
         justify-content: center;
         gap: 5px;
@@ -177,6 +177,10 @@
         margin-bottom: 10px;
     }
 
+    span.greeting-tools-title {
+        font-size: 15px !important;
+}
+
     /* Keep titles bold and let their flex item shrink to wrap beside the caret. */
     .greeting-tools-block .greeting-tools-title-wrapper strong {
         min-width: 0;
@@ -188,6 +192,7 @@
         font-size: 0.8em;
         font-weight: normal;
         white-space: nowrap;
+        color: #7d3353;
     }
 
     /* Center all controls below the title and allow additional rows on narrow phones. */

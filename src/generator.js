@@ -44,10 +44,12 @@ export async function showGenerateGreetingPopup({ title: popupTitle } = {}) {
 
     const header = document.createElement('h3');
     header.textContent = popupTitle || t`Generate Greeting`;
+    header.style.cssText = 'border-bottom: 1px solid var(--SmartThemeBorderColor);padding-bottom: 5px;';
     container.appendChild(header);
 
     const description = document.createElement('p');
     description.textContent = t`Scenario or prompt for the new greeting:`;
+    description.style.cssText = 'margin-bottom: unset;';
     container.appendChild(description);
 
     const popup = new Popup(container, POPUP_TYPE.INPUT, '', {
@@ -67,6 +69,10 @@ export async function showGenerateGreetingPopup({ title: popupTitle } = {}) {
         ],
     });
     popup.inputControls.prepend(lorebookControls.element);
+    
+    const textarea = 
+    popup.inputControls.querySelector('textarea');
+    if (textarea) textarea.style.style.marginBottom = 'unset';
 
     const result = await popup.show();
     if (typeof result !== 'string') return null;

@@ -413,6 +413,57 @@
     resize: vertical;
 }
 
+/* Keep the lorebook choices compact and separate them from title generation. */
+.greeting-tools-lorebook-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-block: 4px 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--SmartThemeBorderColor);
+    text-align: start;
+}
+
+/* Align each checkbox with its wrapping label instead of centering the row. */
+.greeting-tools-lorebook-options .checkbox_label {
+    justify-content: flex-start;
+    gap: 6px;
+    margin: 0;
+    white-space: normal;
+}
+
+/* Preserve native checkbox proportions when a label wraps on a narrow screen. */
+.greeting-tools-lorebook-options input[type="checkbox"] {
+    flex-shrink: 0;
+}
+
+/* Indent dependent choices with transparent space and no vertical border. */
+.greeting-tools-lorebook-options .greeting-tools-lorebook-dependent {
+    padding-inline-start: 24px;
+    min-width: 0;
+}
+
+/* Make the auxiliary choice visually secondary while keeping its native input. */
+.greeting-tools-lorebook-options .greeting-tools-lorebook-auxiliary {
+    font-size: 0.9em;
+}
+
+/* Keep the persona book dropdown inside the popup even for long book names. */
+.greeting-tools-lorebook-options select {
+    display: block;
+    width: 68%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+
+/* Hide nested choices until their parent checkbox is enabled. */
+.greeting-tools-lorebook-options [hidden] {
+    display: none;
+}
+
 /* Temp greeting styles */
 .greeting-tools-temp-block {
     border-left: 3px solid var(--SmartThemeQuoteColor, #f0ad4e);
